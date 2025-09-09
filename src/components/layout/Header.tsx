@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,13 +15,93 @@ export const Header = () => {
 
   const navItems = [
     { path: '/', label: 'Главная' },
-    { path: '/services', label: 'Услуги' },
+    { 
+      path: '/services', 
+      label: 'Услуги',
+      submenu: [
+        { path: '/services/cargo', label: 'Грузоперевозки' },
+        { path: '/services/moving', label: 'Переезды' },
+        { path: '/services/express', label: 'Экспресс-доставка' },
+        { path: '/services/refrigerator', label: 'Рефрижераторы' },
+        { path: '/services/oversized', label: 'Негабарит' },
+        { path: '/services/international', label: 'Международные' },
+        { path: '/services/warehouse', label: 'Складские услуги' },
+        { path: '/services/insurance', label: 'Страхование' }
+      ]
+    },
     { path: '/pricing', label: 'Тарифы' },
-    { path: '/geography', label: 'География' },
+    { 
+      path: '/geography', 
+      label: 'География',
+      submenu: [
+        { path: '/geography/moscow', label: 'Москва и МО' },
+        { path: '/geography/regions', label: 'Регионы России' },
+        { path: '/geography/international', label: 'Международные' },
+        { path: '/geography/routes', label: 'Популярные маршруты' }
+      ]
+    },
     { path: '/fleet', label: 'Автопарк' },
+    { 
+      path: '/company', 
+      label: 'О компании',
+      submenu: [
+        { path: '/company/about', label: 'О нас' },
+        { path: '/company/history', label: 'История' },
+        { path: '/company/team', label: 'Команда' },
+        { path: '/company/certificates', label: 'Сертификаты' },
+        { path: '/company/partners', label: 'Партнёры' },
+        { path: '/company/vacancies', label: 'Вакансии' }
+      ]
+    },
+    { 
+      path: '/clients', 
+      label: 'Клиентам',
+      submenu: [
+        { path: '/clients/calculator', label: 'Калькулятор' },
+        { path: '/clients/tracking', label: 'Отследить груз' },
+        { path: '/clients/documents', label: 'Документы' },
+        { path: '/clients/payment', label: 'Оплата' },
+        { path: '/clients/faq', label: 'FAQ' },
+        { path: '/clients/support', label: 'Поддержка' }
+      ]
+    },
     { path: '/reviews', label: 'Отзывы' },
     { path: '/contacts', label: 'Контакты' }
   ];
+
+  const renderNavItem = (item: any) => {
+    if (item.submenu) {
+      return (
+        <DropdownMenu key={item.path}>
+          <DropdownMenuTrigger className="flex items-center text-sm font-medium transition-colors hover:text-primary text-gray-600">
+            {item.label}
+            <Icon name="ChevronDown" className="h-4 w-4 ml-1" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {item.submenu.map((subItem: any) => (
+              <DropdownMenuItem key={subItem.path} asChild>
+                <Link to={subItem.path}>{subItem.label}</Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    }
+
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        className={`text-sm font-medium transition-colors hover:text-primary ${
+          location.pathname === item.path
+            ? 'text-primary'
+            : 'text-gray-600'
+        }`}
+      >
+        {item.label}
+      </Link>
+    );
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b">
@@ -32,17 +118,7 @@ export const Header = () => {
 
           <nav className="hidden md:flex space-x-8">
             {navItems.map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
-                  location.pathname === item.path
-                    ? 'text-primary'
-                    : 'text-gray-600'
-                }`}
-              >
-                {item.label}
-              </Link>
+              renderNavItem(item)
             ))}
           </nav>
 
